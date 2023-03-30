@@ -5,10 +5,33 @@ metadata:
 spec:
   params:
     - name: message
+
   tasks:
     - name: echo
       taskRef:
         name: echo
       params:
         - name: message
+          value: '$(params.message)'
+
+---
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: cd-pipeline
+spec:
+  params:
+    - name: branch
+      default: 'main'
+    - name: repo-url
+
+  tasks:
+    - name: clone
+      taskRef:
+        name: checkout
+
+      params:
+        - name: branch
+          value: '$(params.branch)'
+        - name: repo-url
           value: '$(params.repo-url)'
