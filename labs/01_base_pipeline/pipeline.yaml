@@ -35,3 +35,21 @@ spec:
           value: '$(params.branch)'
         - name: repo-url
           value: '$(params.repo-url)'
+
+    - name: lint
+      taskRef:
+        name: echo
+      params:
+        - name: message
+          value: 'Calling Flake8 linter…'
+      runAfter:
+        - clone
+
+    - name: tests
+      taskRef:
+        name: echo
+      params:
+        - name: message
+          value: 'Running unit tests with PyUnit…'
+      runAfter:
+        - lint
