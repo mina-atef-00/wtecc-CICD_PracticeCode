@@ -11,7 +11,7 @@ spec:
     - name: echo-message
       image: alpine:3
       command: [/bin/echo]
-      args: ["$(params.message)"]
+      args: ['$(params.message)']
 
 ---
 apiVersion: tekton.dev/v1beta1
@@ -49,3 +49,27 @@ spec:
           rm -rf "${WORKSPACE_SOURCE_PATH}"/..?*
         fi
 
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: nose
+spec:
+  description: This task will run unit tests using the nosetest framework.
+  workspaces:
+    - name: source
+  params:
+    - name: args
+      description: args passed to the nosetest command
+      type: string
+      default: '-v'
+  steps:
+    - name: nosetests
+      image: 'python:3.9-slim'
+      workingDir: '$(workspaces.source.path)'
+      script: |
+        #!/usr/bin/env bash
+        set -eu
+        python -m pip install --upgrade pip wheel
+        pip install -r requirements.txt
+        nosetests $(params.args)
